@@ -42,6 +42,23 @@ trait RestExceptionHandlerTrait
     }
 
     /**
+     * Returns JSON response for invalid users
+     *
+     * @param string $message
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function invalidUser(
+        string $message = 'Invalid User.'
+    ) {
+        return $this->jsonResponse(
+            Response::HTTP_BAD_REQUEST,
+            Response::$statusTexts[Response::HTTP_BAD_REQUEST],
+            '',
+            $message
+        );
+    }
+
+    /**
      * Returns json response for Eloquent model not found exception.
      *
      * @param string $customErrorCode

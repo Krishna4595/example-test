@@ -24,6 +24,6 @@ class SuperAdmin
         if ($user->id == 1) {
             return $next($request);
         }
-        return $this->internalServerError();
+        return $this->invalidUser();
     }
 }

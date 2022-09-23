@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
                 $response['status'] = 404;
                 $response['message'] = 'Record not found.';
                 $data["errors"][] = $response;
-                return response()->json($data, 200, [], JSON_NUMERIC_CHECK);
+                return response()->json($data, 404, [], JSON_NUMERIC_CHECK);
             }
         });
 
@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
                 $response['status'] = 401;
                 $response['message'] = 'Token has expired.';
                 $data["errors"][] = $response;
-                return response()->json($data, 200, [], JSON_NUMERIC_CHECK);
+                return response()->json($data, 401, [], JSON_NUMERIC_CHECK);
             }
         });
     }
