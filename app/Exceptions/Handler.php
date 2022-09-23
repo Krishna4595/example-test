@@ -4,11 +4,11 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
-use App\Traits\RestExceptionHandlerTrait;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class Handler extends ExceptionHandler
 {
-    use RestExceptionHandlerTrait;
     /**
      * A list of the exception types that are not reported.
      *
@@ -36,23 +36,22 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                $response['status'] = 404;
+                $response['message'] = 'Record not found.';
+                $data["errors"][] = $response;
+                return response()->json($data, 200, [], JSON_NUMERIC_CHECK);
+            }
         });
-    }
 
-     /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
-     */
-    public function render($request, Throwable $exception)
-    {
-        return $this->internalServerError();
-       
+        $this->renderable(function (UnauthorizedHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                $response['status'] = 401;
+                $response['message'] = 'Token has expired.';
+                $data["errors"][] = $response;
+                return response()->json($data, 200, [], JSON_NUMERIC_CHECK);
+            }
+        });
     }
 }
