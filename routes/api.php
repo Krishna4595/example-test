@@ -25,6 +25,8 @@ Route::post('login',[UserController::class, 'login']);
 
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout',[UserController::class, 'logout']);
+    Route::post('addHobbies',[UserController::class, 'addHobbies']);
+    Route::post('usersList',[UserController::class, 'usersList'])->middleware(['superadmin']);
 });
 
 

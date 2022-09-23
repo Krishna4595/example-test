@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Hobbies;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -31,6 +32,8 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot',
+        'deleted_at'
     ];
 
     /**
@@ -53,5 +56,10 @@ class User extends Authenticatable implements JWTSubject
     public function getUserPhotoAttribute($value)
     {
         return url($value);
+    }
+
+    public function hobbies()
+    {
+        return $this->belongsToMany(Hobbies::class, 'user_hobbies','user_id', 'hobbies_id');
     }
 }

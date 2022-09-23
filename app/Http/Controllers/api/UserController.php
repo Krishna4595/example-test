@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use App\Models\Hobbies;
 use App\Traits\RestExceptionHandlerTrait;
 use App\Helpers\Api\ResponseHelper;
 use Illuminate\Support\Facades\Hash;
@@ -164,6 +165,72 @@ class UserController extends Controller
                 Response::HTTP_INTERNAL_SERVER_ERROR,
                 trans('Sorry, user cannot be logged out')
             );
+        }
+    }
+
+    /**
+     * User Added Hobbies.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function addHobbies(Request $request)
+    {
+        try {
+            $user = JWTAuth::user();
+            $input = $request->toArray();
+            $validator = Validator::make($input, [
+                'hobbies' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return $this->responseHelper->error(
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    $validator->errors()->first()
+                );
+            }
+            $hobbies = json_decode($input['hobbies']);
+            $user->hobbies()->sync($hobbies,false);
+            $apiStatus = Response::HTTP_OK;
+            $apiMessage = trans('User hobbies has been updated');
+            return $this->responseHelper->success($apiStatus, $apiMessage);
+        } catch (Exception $ex) {
+            return $this->internalServerError();
+        }
+    }
+
+    /**
+     * User List.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function usersList(Request $request)
+    {
+        try {
+            $user = JWTAuth::user();
+            $input = $request->toArray();
+            $validator = Validator::make($input, [
+                'hobbies' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return $this->responseHelper->error(
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    $validator->errors()->first()
+                );
+            }
+            $users = [];
+            $hobbies = Hobbies::with('users')->where('name', 'like', '%' . $input['hobbies'] . '%')->first();
+            if(!empty($hobbies)) {
+                if(!empty($hobbies['users'])) {
+                    $users = $hobbies['users']->toArray();
+                }
+            }
+            $apiData = $users;
+            $apiStatus = Response::HTTP_OK;
+            $apiMessage = trans('Users listing');
+            return $this->responseHelper->success($apiStatus, $apiMessage,$apiData);
+        } catch (Exception $ex) {
+            return $this->internalServerError();
         }
     }
 
