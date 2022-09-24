@@ -97,7 +97,7 @@ class UserController extends Controller
             $user->delete();
             $apiData = [];
             $apiStatus = ($user) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND;
-            $apiMessage = ($user) ? trans('User Updated Sucessfully')
+            $apiMessage = ($user) ? trans('User Deleted Sucessfully')
                 : trans('There is some error.');
             return $this->responseHelper->success($apiStatus, $apiMessage, $apiData);
         } catch (Exception $ex) {

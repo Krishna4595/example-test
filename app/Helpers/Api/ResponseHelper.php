@@ -115,7 +115,7 @@ class ResponseHelper
         $file_name = trim(pathinfo($name, PATHINFO_FILENAME)); // file
         $extension = pathinfo($name, PATHINFO_EXTENSION); // jpg
         $imageName = $file_name . '_' . time() . '.' . $extension;
-        $image->storeAs('public/uploads', $imageName);
+        $image->move(public_path('uploads'), $imageName);
         return $imageName;
     }
 }

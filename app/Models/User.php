@@ -55,7 +55,11 @@ class User extends Authenticatable implements JWTSubject
     
     public function getUserPhotoAttribute($value)
     {
-        return url($value);
+        if ($value) {
+            return url('uploads/'.$value);
+        } else {
+            return url('uploads/no-image.png');
+        }
     }
 
     public function hobbies()
